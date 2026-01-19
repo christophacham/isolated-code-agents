@@ -1,0 +1,64 @@
+# AI CLI Docker Compose Configuration
+# With persistent model storage and RTX 5090 optimizations
+
+# Usage:
+#   docker-compose up -d                              # Start in background
+#   docker-compose exec ai-cli bash                   # Attach to container
+#   docker-compose down                               # Stop (models persist!)
+#   docker-compose down -v                            # Stop AND delete models
+#
+# Custom code path:
+#   CODE_PATH=D:\Projects docker-compose up -d
+
+services:
+  ai-cli:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: ai-cli-container
+    image: ai-cli-docker:latest
+    
+    # Mount your code folder
+    volumes:
+      # Your code workspace - CHANGE THIS!
+      - "${CODE_PATH:-F:/source}:/workspace"
+      
+      # Persistent model storage (survives container restarts)
+      - ollama-models:/ollama-models
+    
+    # Enable NVIDIA GPU support (RTX 5090 / any NVIDIA GPU)
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+    
+    # Keep container running with TTY
+    stdin_open: true
+    tty: true
+    
+    # Working directory
+    working_dir: /workspace
+    
+    # RTX 5090 Optimizations
+    environment:
+      - NVIDIA_VISIBLE_DEVICES=all
+      - NVIDIA_DRIVER_CAPABILITIES=compute,utility
+      # Ollama optimizations
+      - OLLAMA_FLASH_ATTENTION=1
+      - OLLAMA_NUM_GPU=999
+      - OLLAMA_HOST=127.0.0.1:11434
+      - OLLAMA_MODELS=/ollama-models
+    
+    # Restart policy
+    restart: unless-stopped
+
+# Named volume for persistent model storage
+# Models downloaded inside container persist across restarts
+# Use "docker volume ls" to see volumes
+# Use "docker volume rm ai-cli-docker_ollama-models" to delete models
+volumes:
+  ollama-models:
+    name: ai-cli-ollama-models

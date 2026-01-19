@@ -1,0 +1,57 @@
+{
+  "_README": {
+    "description": "Model metadata for local Ollama models (RTX 5090 32GB VRAM)",
+    "usage": "Each entry will be advertised by the Custom/Ollama provider. Aliases are case-insensitive.",
+    "ollama_endpoint": "http://localhost:11434"
+  },
+  "models": [
+    {
+      "model_name": "qwen2.5-coder:32b",
+      "aliases": ["qwen-coder", "coder", "code", "qwen"],
+      "description": "Qwen 2.5 Coder 32B - Best local coding model, 92 languages",
+      "context_window": 131072,
+      "max_output_tokens": 32768,
+      "intelligence_score": 18,
+      "supports_images": false,
+      "supports_json_mode": true,
+      "supports_function_calling": false,
+      "supports_extended_thinking": false
+    },
+    {
+      "model_name": "qwen3:32b",
+      "aliases": ["qwen3"],
+      "description": "Qwen3 32B - Dual mode thinking/non-thinking",
+      "context_window": 131072,
+      "max_output_tokens": 32768,
+      "intelligence_score": 17,
+      "supports_images": false,
+      "supports_json_mode": true,
+      "supports_function_calling": false,
+      "supports_extended_thinking": true
+    },
+    {
+      "model_name": "deepseek-r1:32b",
+      "aliases": ["deepseek", "r1", "reasoning", "think"],
+      "description": "DeepSeek-R1 32B - Best local reasoning, chain-of-thought",
+      "context_window": 128000,
+      "max_output_tokens": 32768,
+      "intelligence_score": 18,
+      "supports_images": false,
+      "supports_json_mode": true,
+      "supports_function_calling": false,
+      "supports_extended_thinking": true
+    },
+    {
+      "model_name": "dolphin3:8b",
+      "aliases": ["dolphin", "uncensored", "fast"],
+      "description": "Dolphin 3 8B - Uncensored, fast for simple tasks",
+      "context_window": 32768,
+      "max_output_tokens": 16384,
+      "intelligence_score": 12,
+      "supports_images": false,
+      "supports_json_mode": true,
+      "supports_function_calling": false,
+      "supports_extended_thinking": false
+    }
+  ]
+}

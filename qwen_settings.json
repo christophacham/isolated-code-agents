@@ -1,0 +1,34 @@
+{
+  "mcpServers": {
+    "pal": {
+      "command": "/home/aiuser/pal-venv/bin/python",
+      "args": ["/home/aiuser/pal-mcp-server/server.py"],
+      "cwd": "/home/aiuser/pal-mcp-server",
+      "env": {
+        "OLLAMA_ENABLED": "true",
+        "OLLAMA_BASE_URL": "http://localhost:11434",
+        "OLLAMA_MODELS_CONFIG": "/home/aiuser/pal-mcp-server/conf/custom_models.json",
+        "DEFAULT_PROVIDER": "ollama",
+        "DEFAULT_MODEL": "qwen2.5-coder:32b",
+        "OPENROUTER_ENABLED": "true",
+        "OPENROUTER_API_KEY": "${OPENROUTER_API_KEY}",
+        "OPENROUTER_BASE_URL": "https://openrouter.ai/api/v1",
+        "OPENROUTER_MODELS_CONFIG": "/home/aiuser/pal-mcp-server/conf/openrouter_models.json",
+        "THINKDEEP_MODEL": "deepseek-r1:32b",
+        "CHALLENGE_MODEL": "deepseek-r1:32b",
+        "CODEREVIEW_MODEL": "qwen2.5-coder:32b",
+        "DEBUG_MODEL": "qwen2.5-coder:32b",
+        "CHAT_MODEL": "dolphin3:8b",
+        "CONSENSUS_MODELS": "deepseek-r1:32b,qwen2.5-coder:32b,qwen3:32b",
+        "LOG_LEVEL": "INFO",
+        "MAX_CONTEXT_TOKENS": "128000",
+        "ENABLE_WEB_SEARCH": "true"
+      }
+    }
+  },
+  "tools": {
+    "sandbox": false
+  },
+  "autoApproveTools": true,
+  "$version": 2
+}

@@ -1,0 +1,36 @@
+# Docker ignore file
+# Prevents unnecessary files from being sent to Docker build context
+
+# Git
+.git
+.gitignore
+
+# Documentation
+README.md
+*.md
+!SKILL.md
+
+# Windows files
+*.bat
+*.ps1
+
+# Compose files (not needed in image)
+docker-compose.yml
+docker-compose*.yml
+
+# IDE
+.vscode
+.idea
+*.swp
+*.swo
+
+# OS files
+Thumbs.db
+.DS_Store
+
+# Logs
+*.log
+
+# Temp files
+*.tmp
+*.temp
