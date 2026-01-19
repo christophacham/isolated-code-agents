@@ -2,6 +2,9 @@
 
 AI coding assistants that can run shell commands and modify files. That's powerful, but risky. This runs them in a Docker container so they can't touch your actual system.
 
+![Manager Menu](images/manager-menu.png)
+*PowerShell manager for building, starting, and attaching to the container.*
+
 ## Why
 
 Claude, Qwen, Gemini - these tools can execute arbitrary code. They're useful, but you're giving an AI full shell access. If it hallucinates a bad command, misunderstands your intent, or just makes a mistake, it runs on your machine.
