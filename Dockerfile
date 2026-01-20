@@ -153,7 +153,7 @@ RUN rustc --version && cargo --version && wasm-pack --version
 
 # Configure Oh My Zsh and shell welcome
 RUN sed -i 's/ZSH_THEME="robbyrussell"/ZSH_THEME="agnoster"/g' ~/.zshrc && \
-    sed -i 's/plugins=(git)/plugins=(git docker zsh-syntax-highlighting zsh-autosuggestions fzf-tab)/g' ~/.zshrc && \
+    sed -i 's/plugins=(git)/plugins=(git zsh-syntax-highlighting zsh-autosuggestions fzf-tab)/g' ~/.zshrc && \
     echo '' >> ~/.zshrc && \
     echo '# Show welcome message' >> ~/.zshrc && \
     echo 'source /home/aiuser/shell-welcome.sh' >> ~/.zshrc && \
