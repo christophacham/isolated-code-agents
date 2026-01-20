@@ -105,6 +105,14 @@ echo "   • gemini   - Gemini CLI (Google)"
 echo "   • ollama   - Local LLM server"
 echo ""
 
+# Display Rust/WASM toolchain info
+echo -e "🦀 ${CYAN}Rust/WASM Toolchain:${NC}"
+RUST_VER=$(rustc --version 2>/dev/null | cut -d' ' -f2 || echo "not found")
+WASM_VER=$(wasm-pack --version 2>/dev/null | cut -d' ' -f2 || echo "not found")
+PNPM_VER=$(pnpm --version 2>/dev/null || echo "not found")
+echo "   Rust: ${RUST_VER} | wasm-pack: ${WASM_VER} | pnpm: ${PNPM_VER}"
+echo ""
+
 
 # Display workspace info
 if [ -d "/workspace" ] && [ "$(ls -A /workspace 2>/dev/null)" ]; then
@@ -138,6 +146,10 @@ echo ""
 echo "   ollama run qwen2.5-coder:32b   # Run coder"
 echo "   ollama run deepseek-r1:32b     # Run reasoning"
 echo "   ollama list                    # List all models"
+echo ""
+echo -e "${CYAN}🦀 Rust/WASM (for AxisBlend etc):${NC}"
+echo "   pnpm install && pnpm wasm      # Build WASM"
+echo "   pnpm dev:full                  # Dev + auto-rebuild"
 echo ""
 echo -e "${CYAN}🤖 PAL MCP in any CLI:${NC}"
 echo '   "Use pal to analyze this with deepseek"'

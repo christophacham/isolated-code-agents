@@ -28,6 +28,13 @@ echo "   ~/download-models.sh --all - Download all 4 models"
 echo "   ollama run <model>         - Run a model"
 echo "   ollama list                - List all models"
 echo ""
+echo -e "${CYAN}Rust/WASM Development:${NC}"
+echo "   rustc --version     - Rust compiler"
+echo "   cargo build         - Build Rust project"
+echo "   wasm-pack build     - Build Rust to WASM"
+echo "   cargo watch         - Auto-rebuild on changes"
+echo "   pnpm install        - Install JS dependencies"
+echo ""
 echo -e "${CYAN}PAL MCP in any CLI:${NC}"
 echo '   "Use pal to analyze this with deepseek"'
 echo '   "Use pal codereview with coder to review this"'

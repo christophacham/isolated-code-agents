@@ -4,6 +4,12 @@
 # Based on: https://github.com/christophacham/ollama-rtx-setup
 #
 # Models are stored in /ollama-models volume for persistence across containers
+#
+# Includes Rust/WASM toolchain for AxisBlend and similar projects:
+# - Rust 1.91+ with wasm32-unknown-unknown target
+# - wasm-pack 0.13.1 for building Rust to WASM
+# - pnpm 10.x package manager
+# - cargo-watch for auto-rebuilding
 
 FROM ollama/ollama:latest
 
@@ -25,6 +31,9 @@ RUN apt-get update && apt-get install -y \
     git \
     unzip \
     build-essential \
+    cmake \
+    pkg-config \
+    libssl-dev \
     python3 \
     python3-pip \
     python3-venv \
@@ -60,13 +69,19 @@ RUN mkdir -p /usr/share/fonts/truetype/jetbrains-mono && \
     fc-cache -fv && \
     rm /tmp/JetBrainsMono.tar.xz
 
-# Install Node.js 22.x (latest LTS) via NodeSource with GPG verification
+# Install Node.js 24.x (latest LTS "Krypton") via NodeSource with GPG verification
 RUN mkdir -p /etc/apt/keyrings && \
     curl -fsSL https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key | gpg --dearmor -o /etc/apt/keyrings/nodesource.gpg && \
-    echo "deb [signed-by=/etc/apt/keyrings/nodesource.gpg] https://deb.nodesource.com/node_22.x nodistro main" > /etc/apt/sources.list.d/nodesource.list && \
+    echo "deb [signed-by=/etc/apt/keyrings/nodesource.gpg] https://deb.nodesource.com/node_24.x nodistro main" > /etc/apt/sources.list.d/nodesource.list && \
     apt-get update && \
     apt-get install -y nodejs && \
     rm -rf /var/lib/apt/lists/*
+
+# Install pnpm globally (latest 10.x)
+ENV PNPM_HOME="/pnpm"
+ENV PATH="$PNPM_HOME:$PATH"
+RUN npm install -g pnpm@latest && \
+    pnpm --version
 
 # Verify Node.js installation
 RUN node --version && npm --version
@@ -88,6 +103,26 @@ RUN sh -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/inst
 RUN git clone --depth=1 https://github.com/zsh-users/zsh-syntax-highlighting.git ${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting && \
     git clone --depth=1 https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/plugins/zsh-autosuggestions && \
     git clone --depth=1 https://github.com/Aloxaf/fzf-tab ${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/plugins/fzf-tab
+
+# ============================================
+# Rust/WASM Toolchain (for AxisBlend and similar projects)
+# ============================================
+
+# Install Rust via rustup (as aiuser)
+RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --default-toolchain stable
+ENV PATH="/home/aiuser/.cargo/bin:${PATH}"
+
+# Add WASM target for WebAssembly compilation
+RUN rustup target add wasm32-unknown-unknown
+
+# Install wasm-pack for building Rust to WASM
+RUN curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh
+
+# Install cargo-watch for auto-rebuilding on file changes
+RUN cargo install cargo-watch
+
+# Verify Rust installation
+RUN rustc --version && cargo --version && wasm-pack --version
 
 # Configure Oh My Zsh and shell welcome
 RUN sed -i 's/ZSH_THEME="robbyrussell"/ZSH_THEME="agnoster"/g' ~/.zshrc && \
