@@ -201,13 +201,22 @@ function Start-Container {
     Write-Color "   Workspace: $MountPath -> /workspace" "Gray"
     Write-Color "   Models: Docker volume '$VolumeName' -> /ollama-models" "Gray"
     
-    # Build docker run command (no port exposure - Ollama only accessible within container)
+    # Build docker run command
+    # Dev server ports bound to localhost only for security
     $dockerArgs = @(
         "run", "-it",
         "--name", $ContainerName,
         "-v", "${DockerPath}:/workspace",
         "-v", "${VolumeName}:/ollama-models",
         "-w", "/workspace",
+        # Dev server ports (localhost only)
+        "-p", "127.0.0.1:3000:3000",   # Docusaurus, React, general Node
+        "-p", "127.0.0.1:5173:5173",   # Vite/SvelteKit
+        "-p", "127.0.0.1:4173:4173",   # Vite preview
+        "-p", "127.0.0.1:8787:8787",   # Cloudflare Wrangler
+        "-p", "127.0.0.1:8788:8788",   # Wrangler Pages
+        "-p", "127.0.0.1:6006:6006",   # Storybook
+        "-p", "127.0.0.1:4321:4321",   # Astro
         "-e", "NVIDIA_VISIBLE_DEVICES=all",
         "-e", "NVIDIA_DRIVER_CAPABILITIES=compute,utility",
         "-e", "OLLAMA_FLASH_ATTENTION=1",
@@ -367,10 +376,10 @@ function Manage-Volume {
 
 function Show-Status {
     Show-Banner
-    
+
     Write-Color "📊 Status:" "Cyan"
     Write-Host ""
-    
+
     # Docker
     if (Test-DockerRunning) {
         Write-Color "   Docker:    ✅ Running" "Green"
@@ -378,7 +387,7 @@ function Show-Status {
         Write-Color "   Docker:    ❌ Not running" "Red"
         return
     }
-    
+
     # GPU
     if (Test-NvidiaGPU) {
         $gpu = nvidia-smi --query-gpu=name,memory.total --format=csv,noheader 2>$null
@@ -386,14 +395,14 @@ function Show-Status {
     } else {
         Write-Color "   GPU:       ⚠️  No NVIDIA GPU (CPU mode)" "Yellow"
     }
-    
+
     # Image
     if (Test-ImageExists) {
         Write-Color "   Image:     ✅ Built" "Green"
     } else {
         Write-Color "   Image:     ⚠️  Not built" "Yellow"
     }
-    
+
     # Container
     if (Test-ContainerRunning) {
         Write-Color "   Container: ✅ Running" "Green"
@@ -402,13 +411,40 @@ function Show-Status {
     } else {
         Write-Color "   Container: ℹ️  Not created" "Gray"
     }
-    
+
     # Volume
     $volSize = Get-VolumeSize
     if (Test-VolumeExists) {
         Write-Color "   Models:    💾 $volSize (persistent volume)" "Cyan"
     } else {
         Write-Color "   Models:    ℹ️  Volume not created" "Gray"
+    }
+}
+
+function Show-DevPorts {
+    Show-Banner
+
+    Write-Color "🌐 Exposed Dev Server Ports:" "Cyan"
+    Write-Host ""
+    Write-Color "   These ports are forwarded from container to host:" "Gray"
+    Write-Host ""
+    Write-Host "   http://localhost:3000  - Docusaurus / React / Node"
+    Write-Host "   http://localhost:5173  - Vite / SvelteKit"
+    Write-Host "   http://localhost:4173  - Vite Preview"
+    Write-Host "   http://localhost:6006  - Storybook"
+    Write-Host "   http://localhost:4321  - Astro"
+    Write-Host "   http://localhost:8787  - Cloudflare Wrangler"
+    Write-Host "   http://localhost:8788  - Wrangler Pages"
+    Write-Host ""
+
+    if (Test-ContainerRunning) {
+        Write-Color "   Container is running - ports are active." "Green"
+        Write-Host ""
+        Write-Color "   To start a dev server inside the container:" "Gray"
+        Write-Host "   $ pnpm dev          # Start on port 5173"
+        Write-Host "   $ pnpm storybook    # Start on port 6006"
+    } else {
+        Write-Color "   Container is not running - start it first." "Yellow"
     }
 }
 
@@ -429,6 +465,7 @@ function Show-Menu {
     Write-Color "   [8] Download Models (inside container)" "Yellow"
     Write-Color "   [9] Manage Model Volume" "Yellow"
     Write-Host ""
+    Write-Color "   [P] Show Dev Ports" "Magenta"
     Write-Color "   [R] Refresh Status" "Gray"
     Write-Color "   [Q] Quit" "Gray"
     Write-Host ""
@@ -454,6 +491,7 @@ function Main {
             "logs" { Show-Logs; return }
             "download" { Download-Models; return }
             "status" { Show-Status; return }
+            "ports" { Show-DevPorts; return }
             default { Write-Color "Unknown action: $Action" "Red"; return }
         }
     }
@@ -473,6 +511,8 @@ function Main {
             "7" { Show-Logs; Read-Host "Press Enter" }
             "8" { Download-Models; Read-Host "Press Enter" }
             "9" { Manage-Volume; Read-Host "Press Enter" }
+            "p" { Show-DevPorts; Read-Host "Press Enter" }
+            "P" { Show-DevPorts; Read-Host "Press Enter" }
             "r" { continue }
             "R" { continue }
             "q" { Write-Color "Goodbye!" "Cyan"; exit 0 }

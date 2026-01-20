@@ -234,6 +234,15 @@ ENV OLLAMA_NUM_GPU=999
 ENV OLLAMA_HOST=127.0.0.1:11434
 ENV OLLAMA_MODELS=/ollama-models
 
+# Expose common dev server ports (bound to localhost at runtime for security)
+EXPOSE 3000
+EXPOSE 5173
+EXPOSE 4173
+EXPOSE 8787
+EXPOSE 8788
+EXPOSE 6006
+EXPOSE 4321
+
 # Healthcheck for Ollama server
 HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
     CMD curl -f http://127.0.0.1:11434/api/tags || exit 1
