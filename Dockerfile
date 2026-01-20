@@ -93,14 +93,20 @@ RUN git clone --depth=1 https://github.com/zsh-users/zsh-syntax-highlighting.git
 RUN sed -i 's/ZSH_THEME="robbyrussell"/ZSH_THEME="agnoster"/g' ~/.zshrc && \
     sed -i 's/plugins=(git)/plugins=(git docker zsh-syntax-highlighting zsh-autosuggestions fzf-tab)/g' ~/.zshrc && \
     echo '' >> ~/.zshrc && \
-    echo '# PAL MCP Server alias' >> ~/.zshrc && \
-    echo 'alias pal="cd /home/aiuser/pal-mcp-server && /home/aiuser/pal-venv/bin/python server.py"' >> ~/.zshrc && \
+    echo '# PAL MCP Server aliases (runs in tmux background)' >> ~/.zshrc && \
+    echo "alias pal='tmux has-session -t pal 2>/dev/null && echo \"PAL already running (use pal-attach to view)\" || (tmux new-session -d -s pal \"cd /home/aiuser/pal-mcp-server && /home/aiuser/pal-venv/bin/python server.py\" && echo \"PAL started in background (use pal-attach to view)\")'" >> ~/.zshrc && \
+    echo "alias pal-attach='tmux attach -t pal'" >> ~/.zshrc && \
+    echo "alias pal-stop='tmux kill-session -t pal 2>/dev/null && echo \"PAL stopped\" || echo \"PAL not running\"'" >> ~/.zshrc && \
+    echo "alias pal-status='tmux has-session -t pal 2>/dev/null && echo \"PAL is running\" || echo \"PAL is not running\"'" >> ~/.zshrc && \
     echo '' >> ~/.zshrc && \
     echo '# Show welcome message' >> ~/.zshrc && \
     echo 'source /home/aiuser/shell-welcome.sh' >> ~/.zshrc && \
     echo '' >> ~/.bashrc && \
-    echo '# PAL MCP Server alias' >> ~/.bashrc && \
-    echo 'alias pal="cd /home/aiuser/pal-mcp-server && /home/aiuser/pal-venv/bin/python server.py"' >> ~/.bashrc && \
+    echo '# PAL MCP Server aliases (runs in tmux background)' >> ~/.bashrc && \
+    echo "alias pal='tmux has-session -t pal 2>/dev/null && echo \"PAL already running (use pal-attach to view)\" || (tmux new-session -d -s pal \"cd /home/aiuser/pal-mcp-server && /home/aiuser/pal-venv/bin/python server.py\" && echo \"PAL started in background (use pal-attach to view)\")'" >> ~/.bashrc && \
+    echo "alias pal-attach='tmux attach -t pal'" >> ~/.bashrc && \
+    echo "alias pal-stop='tmux kill-session -t pal 2>/dev/null && echo \"PAL stopped\" || echo \"PAL not running\"'" >> ~/.bashrc && \
+    echo "alias pal-status='tmux has-session -t pal 2>/dev/null && echo \"PAL is running\" || echo \"PAL is not running\"'" >> ~/.bashrc && \
     echo '' >> ~/.bashrc && \
     echo '# Show welcome message' >> ~/.bashrc && \
     echo 'source /home/aiuser/shell-welcome.sh' >> ~/.bashrc
