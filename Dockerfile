@@ -6,11 +6,11 @@
 # Models are stored in /ollama-models volume for persistence across containers
 #
 # Includes development toolchains:
-# - Rust 1.91+ with wasm32-unknown-unknown target
-# - wasm-pack 0.13.1 for building Rust to WASM
-# - Go 1.24+ (golang)
+# - Rust stable with wasm32-unknown-unknown target
+# - wasm-pack for building Rust to WASM
+# - Go 1.25.x (golang)
 # - C/C++ (gcc, g++, clang, gdb)
-# - pnpm 10.x package manager
+# - pnpm 10.28.1 package manager
 # - cargo-watch for auto-rebuilding
 
 FROM ollama/ollama:latest
@@ -87,10 +87,10 @@ RUN mkdir -p /etc/apt/keyrings && \
     apt-get install -y nodejs && \
     rm -rf /var/lib/apt/lists/*
 
-# Install pnpm globally (latest 10.x)
+# Install pnpm globally (pinned to latest stable)
 ENV PNPM_HOME="/pnpm"
 ENV PATH="$PNPM_HOME:$PATH"
-RUN npm install -g pnpm@latest && \
+RUN npm install -g pnpm@10.28.1 && \
     pnpm --version
 
 # Verify Node.js installation
@@ -99,8 +99,8 @@ RUN node --version && npm --version
 # ============================================
 # Go (Golang) Installation
 # ============================================
-# Install Go 1.24.x (latest stable)
-RUN curl -fsSL https://go.dev/dl/go1.24.12.linux-amd64.tar.gz -o /tmp/go.tar.gz && \
+# Install Go 1.25.x (latest stable)
+RUN curl -fsSL https://go.dev/dl/go1.25.6.linux-amd64.tar.gz -o /tmp/go.tar.gz && \
     tar -C /usr/local -xzf /tmp/go.tar.gz && \
     rm /tmp/go.tar.gz
 ENV PATH="/usr/local/go/bin:${PATH}"
