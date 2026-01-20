@@ -19,6 +19,13 @@ This container isolates that risk. The AI can do whatever it wants inside the co
 - **Ollama** - Local models (no API costs, full privacy)
 - **PAL MCP Server** - Lets the AIs use local Ollama models as tools
 
+**Development Toolchains:**
+- Rust + wasm-pack + cargo-watch (WASM development)
+- Go 1.25.x
+- Node.js 24.x + pnpm
+- C/C++ (gcc, clang, gdb)
+- Playwright (Chromium) for E2E testing
+
 Optimized for RTX 5090 (32GB VRAM) but works on any NVIDIA GPU or CPU-only.
 
 ## Get Started

@@ -12,6 +12,7 @@
 # - C/C++ (gcc, g++, clang, gdb)
 # - pnpm 10.28.1 package manager
 # - cargo-watch for auto-rebuilding
+# - Playwright (Chromium) for E2E testing
 
 FROM ollama/ollama:latest
 
@@ -95,6 +96,15 @@ RUN npm install -g pnpm@10.28.1 && \
 
 # Verify Node.js installation
 RUN node --version && npm --version
+
+# ============================================
+# Playwright (E2E Testing)
+# ============================================
+# Install Playwright with Chromium browser and all system dependencies
+# --with-deps installs required libs: libatk, libnss, libcups, libdrm, libxkbcommon, etc.
+# Only installing Chromium to save space (~400MB vs ~1.5GB for all browsers)
+RUN npx playwright install --with-deps chromium && \
+    npx playwright --version
 
 # ============================================
 # Go (Golang) Installation

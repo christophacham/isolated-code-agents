@@ -114,7 +114,8 @@ CLANG_VER=$(clang --version 2>/dev/null | head -1 | grep -oP '\d+\.\d+\.\d+' || 
 echo "   Rust: ${RUST_VER} | Go: ${GO_VER} | GCC: ${GCC_VER} | Clang: ${CLANG_VER}"
 WASM_VER=$(wasm-pack --version 2>/dev/null | cut -d' ' -f2 || echo "n/a")
 PNPM_VER=$(pnpm --version 2>/dev/null || echo "n/a")
-echo "   wasm-pack: ${WASM_VER} | pnpm: ${PNPM_VER}"
+PLAYWRIGHT_VER=$(npx playwright --version 2>/dev/null || echo "n/a")
+echo "   wasm-pack: ${WASM_VER} | pnpm: ${PNPM_VER} | Playwright: ${PLAYWRIGHT_VER}"
 echo ""
 
 
@@ -154,6 +155,7 @@ echo ""
 echo -e "${CYAN}🛠️  Development:${NC}"
 echo "   cargo build / go build / gcc   # Build projects"
 echo "   pnpm install && pnpm wasm      # Build WASM"
+echo "   pnpm test / npx playwright test # Run tests"
 echo ""
 echo -e "${CYAN}🤖 PAL MCP in any CLI:${NC}"
 echo '   "Use pal to analyze this with deepseek"'
