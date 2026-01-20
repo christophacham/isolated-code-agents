@@ -5,9 +5,11 @@
 #
 # Models are stored in /ollama-models volume for persistence across containers
 #
-# Includes Rust/WASM toolchain for AxisBlend and similar projects:
+# Includes development toolchains:
 # - Rust 1.91+ with wasm32-unknown-unknown target
 # - wasm-pack 0.13.1 for building Rust to WASM
+# - Go 1.24+ (golang)
+# - C/C++ (gcc, g++, clang, gdb)
 # - pnpm 10.x package manager
 # - cargo-watch for auto-rebuilding
 
@@ -34,10 +36,18 @@ RUN apt-get update && apt-get install -y \
     cmake \
     pkg-config \
     libssl-dev \
+    # C/C++ toolchain
+    clang \
+    lldb \
+    lld \
+    gdb \
+    valgrind \
+    # Python
     python3 \
     python3-pip \
     python3-venv \
     python3-dev \
+    # CLI tools
     ripgrep \
     fzf \
     jq \
@@ -86,11 +96,28 @@ RUN npm install -g pnpm@latest && \
 # Verify Node.js installation
 RUN node --version && npm --version
 
+# ============================================
+# Go (Golang) Installation
+# ============================================
+# Install Go 1.24.x (latest stable)
+RUN curl -fsSL https://go.dev/dl/go1.24.12.linux-amd64.tar.gz -o /tmp/go.tar.gz && \
+    tar -C /usr/local -xzf /tmp/go.tar.gz && \
+    rm /tmp/go.tar.gz
+ENV PATH="/usr/local/go/bin:${PATH}"
+ENV GOPATH="/home/aiuser/go"
+ENV PATH="${GOPATH}/bin:${PATH}"
+
+# Verify Go installation
+RUN go version
+
 # Create non-root user for running CLIs (no sudo access)
 RUN useradd -m -s /bin/zsh aiuser
 
 # Create shared model directory (will be mounted as volume)
 RUN mkdir -p /ollama-models && chown -R aiuser:aiuser /ollama-models
+
+# Create Go workspace directory
+RUN mkdir -p /home/aiuser/go && chown -R aiuser:aiuser /home/aiuser/go
 
 # Switch to aiuser for npm global installs
 USER aiuser

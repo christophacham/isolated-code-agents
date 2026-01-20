@@ -90,18 +90,28 @@ function Get-VolumeSize {
 }
 
 function Build-Image {
+    param([switch]$NoCache)
+
     Show-Banner
-    Write-Color "🔨 Building Docker Image..." "Yellow"
+    if ($NoCache) {
+        Write-Color "🔨 Rebuilding Docker Image (no cache)..." "Yellow"
+    } else {
+        Write-Color "🔨 Building Docker Image..." "Yellow"
+    }
     Write-Host ""
-    
+
     $scriptDir = Split-Path -Parent $MyInvocation.PSCommandPath
     if (-not $scriptDir) { $scriptDir = Get-Location }
-    
+
     Write-Color "   Build context: $scriptDir" "Gray"
     Write-Host ""
-    
+
     try {
-        docker build -t "${ImageName}:${ImageTag}" $scriptDir
+        if ($NoCache) {
+            docker build --no-cache -t "${ImageName}:${ImageTag}" $scriptDir
+        } else {
+            docker build -t "${ImageName}:${ImageTag}" $scriptDir
+        }
         Write-Host ""
         Write-Color "✅ Image built successfully!" "Green"
         return $true
@@ -409,14 +419,15 @@ function Show-Menu {
     Write-Color "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━" "Gray"
     Write-Host ""
     Write-Color "   [1] Build Docker Image" "White"
-    Write-Color "   [2] Start Container (with code folder)" "White"
-    Write-Color "   [3] Stop Container" "White"
-    Write-Color "   [4] Attach to Main Shell" "White"
-    Write-Color "   [5] Open New Shell" "White"
-    Write-Color "   [6] View Logs" "White"
+    Write-Color "   [2] Rebuild Image (no cache)" "White"
+    Write-Color "   [3] Start Container (with code folder)" "White"
+    Write-Color "   [4] Stop Container" "White"
+    Write-Color "   [5] Attach to Main Shell" "White"
+    Write-Color "   [6] Open New Shell" "White"
+    Write-Color "   [7] View Logs" "White"
     Write-Host ""
-    Write-Color "   [7] Download Models (inside container)" "Yellow"
-    Write-Color "   [8] Manage Model Volume" "Yellow"
+    Write-Color "   [8] Download Models (inside container)" "Yellow"
+    Write-Color "   [9] Manage Model Volume" "Yellow"
     Write-Host ""
     Write-Color "   [R] Refresh Status" "Gray"
     Write-Color "   [Q] Quit" "Gray"
@@ -436,6 +447,7 @@ function Main {
     if ($Action) {
         switch ($Action.ToLower()) {
             "build" { Build-Image; return }
+            "rebuild" { Build-Image -NoCache; return }
             "start" { Start-Container -MountPath $CodePath; return }
             "stop" { Stop-Container; return }
             "attach" { Attach-Container; return }
@@ -450,16 +462,17 @@ function Main {
     while ($true) {
         Show-Menu
         $choice = Read-Host "Select"
-        
+
         switch ($choice) {
             "1" { Build-Image; Read-Host "Press Enter" }
-            "2" { Start-Container }
-            "3" { Stop-Container; Read-Host "Press Enter" }
-            "4" { Attach-Container }
-            "5" { Open-NewShell }
-            "6" { Show-Logs; Read-Host "Press Enter" }
-            "7" { Download-Models; Read-Host "Press Enter" }
-            "8" { Manage-Volume; Read-Host "Press Enter" }
+            "2" { Build-Image -NoCache; Read-Host "Press Enter" }
+            "3" { Start-Container }
+            "4" { Stop-Container; Read-Host "Press Enter" }
+            "5" { Attach-Container }
+            "6" { Open-NewShell }
+            "7" { Show-Logs; Read-Host "Press Enter" }
+            "8" { Download-Models; Read-Host "Press Enter" }
+            "9" { Manage-Volume; Read-Host "Press Enter" }
             "r" { continue }
             "R" { continue }
             "q" { Write-Color "Goodbye!" "Cyan"; exit 0 }

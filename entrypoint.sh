@@ -105,12 +105,16 @@ echo "   • gemini   - Gemini CLI (Google)"
 echo "   • ollama   - Local LLM server"
 echo ""
 
-# Display Rust/WASM toolchain info
-echo -e "🦀 ${CYAN}Rust/WASM Toolchain:${NC}"
-RUST_VER=$(rustc --version 2>/dev/null | cut -d' ' -f2 || echo "not found")
-WASM_VER=$(wasm-pack --version 2>/dev/null | cut -d' ' -f2 || echo "not found")
-PNPM_VER=$(pnpm --version 2>/dev/null || echo "not found")
-echo "   Rust: ${RUST_VER} | wasm-pack: ${WASM_VER} | pnpm: ${PNPM_VER}"
+# Display development toolchain info
+echo -e "🛠️  ${CYAN}Development Toolchains:${NC}"
+RUST_VER=$(rustc --version 2>/dev/null | cut -d' ' -f2 || echo "n/a")
+GO_VER=$(go version 2>/dev/null | cut -d' ' -f3 | sed 's/go//' || echo "n/a")
+GCC_VER=$(gcc --version 2>/dev/null | head -1 | grep -oP '\d+\.\d+\.\d+' || echo "n/a")
+CLANG_VER=$(clang --version 2>/dev/null | head -1 | grep -oP '\d+\.\d+\.\d+' || echo "n/a")
+echo "   Rust: ${RUST_VER} | Go: ${GO_VER} | GCC: ${GCC_VER} | Clang: ${CLANG_VER}"
+WASM_VER=$(wasm-pack --version 2>/dev/null | cut -d' ' -f2 || echo "n/a")
+PNPM_VER=$(pnpm --version 2>/dev/null || echo "n/a")
+echo "   wasm-pack: ${WASM_VER} | pnpm: ${PNPM_VER}"
 echo ""
 
 
@@ -147,9 +151,9 @@ echo "   ollama run qwen2.5-coder:32b   # Run coder"
 echo "   ollama run deepseek-r1:32b     # Run reasoning"
 echo "   ollama list                    # List all models"
 echo ""
-echo -e "${CYAN}🦀 Rust/WASM (for AxisBlend etc):${NC}"
+echo -e "${CYAN}🛠️  Development:${NC}"
+echo "   cargo build / go build / gcc   # Build projects"
 echo "   pnpm install && pnpm wasm      # Build WASM"
-echo "   pnpm dev:full                  # Dev + auto-rebuild"
 echo ""
 echo -e "${CYAN}🤖 PAL MCP in any CLI:${NC}"
 echo '   "Use pal to analyze this with deepseek"'
